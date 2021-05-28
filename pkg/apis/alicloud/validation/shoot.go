@@ -39,6 +39,8 @@ const (
 	ReservedCIDR = "100.64.0.0/10"
 )
 
+var ZonesNotSupportEnhancedNAT = []string{"cn-shanghai-l"}
+
 // ValidateNetworkingUpdate validates the network setting of a Shoot during update.
 // The network CIDR settings should be immutable.
 func ValidateNetworkingUpdate(oldNetworking, newNetworking core.Networking, fldPath *field.Path) field.ErrorList {

@@ -15,6 +15,8 @@
 package validation
 
 import (
+	"fmt"
+
 	apisalicloud "github.com/gardener/gardener-extension-provider-alicloud/pkg/apis/alicloud"
 	cidrvalidation "github.com/gardener/gardener/pkg/utils/validation/cidr"
 	apivalidation "k8s.io/apimachinery/pkg/api/validation"
@@ -44,6 +46,13 @@ func ValidateInfrastructureConfig(infra *apisalicloud.InfrastructureConfig, node
 	networksPath := field.NewPath("networks")
 	if len(infra.Networks.Zones) == 0 {
 		allErrs = append(allErrs, field.Required(networksPath.Child("zones"), "must specify at least the network for one zone"))
+	} else {
+		for _, zone := range ZonesNotSupportEnhancedNAT {
+			if infra.Networks.Zones[0].Name == zone {
+				allErrs = append(allErrs, field.Required(networksPath.Child("zones").Index(0), fmt.Sprintf("zone %s cannot be specified at the first one", infra.Networks.Zones[0].Name)))
+				break
+			}
+		}
 	}
 
 	var (
